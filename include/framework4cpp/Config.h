@@ -14,6 +14,16 @@ struct ThreadingSettings {
     std::size_t ioThreadCount{1};
 };
 
+// グローバルバッファで扱うフィールド名の設定
+struct BufferFieldNames {
+    // 発生元フィールド名（未指定時は "source"）
+    std::string source{"source"};
+    // タイムスタンプフィールド名（未指定時は "timestamp"）
+    std::string timestamp{"timestamp"};
+    // ペイロードフィールド名（未指定時は "payload"）
+    std::string payload{"payload"};
+};
+
 // グローバルバッファに関する設定を保持する構造体
 struct BufferSettings {
     // バッファに保持できる最大アイテム数
@@ -24,6 +34,8 @@ struct BufferSettings {
     bool memoryMapped{false};
     // メモリマップトファイルを利用する際のバックファイルパス
     std::string backingFile{};
+    // BufferItem のフィールド名設定
+    BufferFieldNames fieldNames{};
 };
 
 // CSV 出力の整形と出力方法に関する設定

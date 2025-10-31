@@ -106,6 +106,15 @@ Config Config::loadFromFile(const std::string &path) {
                 config.buffer.memoryMapped = parseBool(value);
             } else if (key == "backing_file") {
                 config.buffer.backingFile = value;
+            } else if (key == "source_field") {
+                // 発生元フィールド名の上書き指定
+                config.buffer.fieldNames.source = value;
+            } else if (key == "timestamp_field") {
+                // タイムスタンプフィールド名の上書き指定
+                config.buffer.fieldNames.timestamp = value;
+            } else if (key == "payload_field") {
+                // ペイロードフィールド名の上書き指定
+                config.buffer.fieldNames.payload = value;
             } else {
                 throw std::runtime_error("Unknown key in [buffer]: " + key);
             }

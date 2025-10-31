@@ -35,8 +35,29 @@ int main(int argc, char **argv) {
         // 設定ファイルを読み込んで実行時パラメータを取得
         auto config = framework4cpp::Config::loadFromFile(configPath);
 
+        // 共有バッファ用のオプションを準備し、未指定項目はデフォルトを利用
+        global_buffer::Options bufferOptions{};
+        if (config.buffer.capacity > 0) {
+            // 容量が指定されていればデフォルトを上書き
+            bufferOptions.capacity = config.buffer.capacity;
+        }
+        if (config.buffer.maxPayloadSize > 0) {
+            // ペイロードの最大サイズ指定があれば反映
+            bufferOptions.maxPayloadSize = config.buffer.maxPayloadSize;
+        }
+        // メモリマップト利用可否を設定（false の場合は backingFile 指定も無視される）
+        bufferOptions.memoryMapped = config.buffer.memoryMapped;
+        if (!config.buffer.backingFile.empty()) {
+            // バックファイル名が明示指定されていれば採用
+            bufferOptions.backingFile = config.buffer.backingFile;
+        }
+        // フィールド名の指定があればバッファオプションに転記
+        bufferOptions.fieldNames.source = config.buffer.fieldNames.source;
+        bufferOptions.fieldNames.timestamp = config.buffer.fieldNames.timestamp;
+        bufferOptions.fieldNames.payload = config.buffer.fieldNames.payload;
+
         // 共有バッファを設定に従って初期化
-        framework4cpp::GlobalBuffer buffer(config.buffer.capacity, config.buffer.memoryMapped, config.buffer.backingFile);
+        global_buffer::GlobalBuffer buffer(bufferOptions);
 
         // 有効なセッションのみ生成するためのコンテナ
         std::vector<framework4cpp::StreamingSessionPtr> sessions;
